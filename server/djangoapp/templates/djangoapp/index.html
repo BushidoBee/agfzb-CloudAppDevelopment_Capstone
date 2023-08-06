@@ -17,35 +17,31 @@
     <nav class = "navbar navbar-light bg-light">
         <div class = "container-fluid">
             <div class="navbar-header">
-                <a class="btn btn-link" href="{% url 'djangoapp:index' %}">Home Page</a><a class="btn btn-link" href="#">Page Two</a>
+                <a class="btn btn-link" href="{% url 'djangoapp:index' %}">Dealership Review</a>
+                <a class="btn btn-link" href="{% url 'djangoapp:about' %}">About Us</a>
+                <a class="btn btn-link" href="{% url 'djangoapp:contact' %}">Contact Us</a><!--Add:  w/ Brackets-->
             </div>
-            <a class="btn btn-link" href="{% url 'djangoapp:about' %}">About Us</a>
-            <a class="btn btn-link" href="{% url 'djangoapp:contact' %}">Contact Us</a><!--Add:  w/ Brackets-->
+            <div class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                <li>
+                    <a class="btn btn-link" href="#">{{user.first_name}}({{user.username}})</a>
+                    <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a><!--Add: % url 'djangoapp:logout' % w/ Brackets-->
+                </li>
+                {% else %}<!--Add: % else % w/ Brackets-->
+                <li>
+                    <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post"><!--Add: >Action< % url 'djangoapp:login' % w/ Brackets-->
+                        {% csrf_token %}<!--Add: % csrf_token % w/ Brackets-->
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Username" name="username" >
+                            <input type="password" class="form-control" placeholder="Password" name="psw" >
+                            <button class="btn btn-primary" type="submit">Login</button>
+                            <a class="btn btn-link" href="{% url 'djangoapp:registration' %}">Sign Up</a><!--Add:  w/ Brackets-->
+                        </div>
+                    </form>
+                </li>
+                {% endif %}<!--Add: % endif % w/ Brackets-->
+            </div>
         </div>
-        <!--Add more content below!-->
-        <ul class="nav navbar-nav navbar-right">
-        <!--Add: % if user.is_authenticated % w/ Brackets-->
-        <li>
-             <a class="btn btn-link" href="#">Username Placeholder</a>
-             <!--Add: user.first_name w/ Double Brackets-->
-             <!--Add: user.username w/ Parenthesis + Double Brackets-->
-             <a class="btn btn-link" href="#">Logout</a>
-             <!--Add: % url 'djangoapp:logout' % w/ Brackets-->
-        </li>
-        <!--Add: % else % w/ Brackets-->
-        <li>
-             <form class="form-inline" method="post"><!--Add: >Action< % url 'djangoapp:login' % w/ Brackets-->
-                <!--Add: % csrf_token % w/ Brackets-->
-                <div class="input-group">
-                     <input type="text" class="form-control" placeholder="Username" name="username" >
-                     <input type="password" class="form-control" placeholder="Password" name="psw" >
-                     <button class="btn btn-primary" type="submit">Login</button>
-                     <a class="btn btn-link" href="#">Sign Up</a><!--Add: % url 'djangoapp:registration' % w/ Brackets-->
-                </div>
-             </form>
-        </li>
-        <!--Add: % endif % w/ Brackets-->
-        </ul>
     </nav>
     <table class="table" id="table" data-filter-control="true">
         <thead>
