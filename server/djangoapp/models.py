@@ -11,22 +11,17 @@ class CarMake(models.Model):
         return "Name: " + self.name + "," \
                 "Description: " + self.descript
 
-# Class CarModel w/ Unique ID, Make, Name, Vehicle Type, Model Type, and Year Fields
+# Class CarModel w/ Unique ID,  Name, Model Type, CarBrands, and Year Fields
 class CarModel(models.Model):
-    make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
+    car_name = models.CharField(null=False, max_length=20, primary_key=True)
     dealer_id = models.IntegerField(null=False)
-    name = models.CharField(null=False, max_length=20, primary_key=True)
-    SUV = 'suv'
-    SEDAN = 'sedan'
-    COUPE = 'coupe'
-    VAN = 'van'
-    VEHICLE_TYPE = [(SUV, 'SUV'),(SEDAN, 'Sedan'),(COUPE, 'coupe'),(VAN, 'van')]
     model_type = models.CharField(max_length=5, choices=VEHICLE_TYPE)
+    car_brands = models.ManyToManyField(CarMake)
     year = models.IntegerField(default=datetime.date.today().year)
     
     def __str__(self):
-        return  "Make: " + self.make.name + "," \
-                "Name: " + self.name + "," \
+        return  "Make: " + self.car_brands.car_name + "," \
+                "Name: " + self.car_name + "," \
                 "Year: " + str(self.year) + "," \
                 "Type: " + self.model_type + "," \
                 "Dealer ID: " + str(self.dealer_id)
