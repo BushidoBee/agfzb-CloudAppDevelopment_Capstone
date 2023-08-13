@@ -4,27 +4,27 @@ import datetime
 
 # Class CarMake w/ Name and Description Fields
 class CarMake(models.Model):
-    name = models.CharField(null=False, max_length=20, primary_key=True)
-    descript = models.TextField()
+    brand = models.CharField(null=False, max_length=20, primary_key=True)
+    descript = models.CharField(max_length=1000)
 
     def __str__(self):
-        return "Name: " + self.name + "," \
-                "Description: " + self.descript
+        return self.brand
 
-# Class CarModel w/ Unique ID,  Name, Model Type, CarBrands, and Year Fields
+# Class CarModel w/ Unique ID, Car Brands, Model, Vehicle Type, and Year Fields
 class CarModel(models.Model):
-    car_name = models.CharField(null=False, max_length=20, primary_key=True)
+    SUV = 'suv'
+    SEDAN = 'sedan'
+    TRUCK = 'truck'
+    COUPE = 'coupe'
+    CAR_TYPES = [(SEDAN, 'Sedan'),(SUV, 'Suv'),(TRUCK, 'Truck'),(COUPE, 'Coupe')]
+    car_brand = models.ForeignKey(CarMake, on_delete=models.CASCADE, default='None')
+    car_model = models.CharField(null=False, max_length=20)
     dealer_id = models.IntegerField(null=False)
-    model_type = models.CharField(max_length=5, choices=VEHICLE_TYPE)
-    car_brands = models.ManyToManyField(CarMake)
-    year = models.IntegerField(default=datetime.date.today().year)
+    vehicle_type = models.CharField(max_length=5, choices=CAR_TYPES)
+    year = models.DateField()
     
     def __str__(self):
-        return  "Make: " + self.car_brands.car_name + "," \
-                "Name: " + self.car_name + "," \
-                "Year: " + str(self.year) + "," \
-                "Type: " + self.model_type + "," \
-                "Dealer ID: " + str(self.dealer_id)
+        return  "Brand: " + str(self.car_brand) + " " + str(self.car_model) + " | Dealer #" + str(self.dealer_id)
 
 # Class CarDealer; Holds Basic Data
 class CarDealer:
