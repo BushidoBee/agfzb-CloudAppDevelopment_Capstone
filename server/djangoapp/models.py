@@ -44,20 +44,19 @@ class CarDealer:
 
 # Class DealerReview; Holds Basic Data
 class DealerReview:
-
-    def __init__(self, dealership, name, purchase, review):
+    def __init__(self, dealership, name, purchase, review, purchase_date, vehicle_make, vehicle_model, vehicle_year, sentiment, dealerID):
         # Fields below cannot be empty
         self.dealership = dealership
         self.name = name
         self.purchase = purchase
         self.review = review
         # These fields can be null
-        self.purchase_date = ""
-        self.purchase_make = ""
-        self.purchase_model = ""
-        self.purchase_year = ""
-        self.sentiment = ""
-        self.id = ""
+        self.purchase_date = purchase_date
+        self.purchase_make = vehicle_make
+        self.purchase_model = vehicle_model
+        self.purchase_year = vehicle_year
+        self.sentiment = sentiment
+        self.id = id
 
     def __str__(self):
         return "Review: " + self.review

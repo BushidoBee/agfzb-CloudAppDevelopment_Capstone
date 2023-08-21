@@ -32,8 +32,8 @@
                     <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post"><!--Add: >Action< % url 'djangoapp:login' % w/ Brackets-->
                         {% csrf_token %}<!--Add: % csrf_token % w/ Brackets-->
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Username" name="username" >
-                            <input type="password" class="form-control" placeholder="Password" name="psw" >
+                            <input type="text" class="form-control" placeholder="Username" name="username">
+                            <input type="password" class="form-control" placeholder="Password" name="psw">
                             <button class="btn btn-primary" type="submit">Login</button>
                             <a class="btn btn-link" href="{% url 'djangoapp:registration' %}">Sign Up</a><!--Add:  w/ Brackets-->
                         </div>
@@ -54,10 +54,21 @@
                 <th data-field="st" data-filter-control="select">State</th>
             </tr>
         </thead>
+        <tbody>
+            {% for dealer in ds_list %}
+                <tr>
+                    <td>{{dealer.id}}</td>
+                    <td><a href="{% url 'djangoapp:dealer_details' dealer.id %}">{{dealer.full_name}}</a></td><!--Add:  w/ Brackets-->
+                    <td>{{dealer.city}}</td>
+                    <td>{{dealer.address}}</td>
+                    <td>{{dealer.zip}}</td>
+                    <td>{{dealer.st}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
         <!--Add more content below!-->
         
     </table>
-     This is the index page of your Django app!
 
     <!--Add a dealer table here -->
 
