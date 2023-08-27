@@ -18,8 +18,7 @@ def get_request(url, **kwargs):
             response = requests.get(url, headers={
                                     'Content-Type': 'application/json'}, params=kwargs, auth=HTTPBasicAuth("apikey", kwargs["apikey"]))
         else:
-            response = requests.get(
-                url, headers={'Content-Type': 'application/json'}, params=kwargs)
+            response = requests.get(url, headers={'Content-Type': 'application/json'}, params=kwargs)
         status_code = response.status_code
         print("With status {} ".format(status_code))
         json_data = json.loads(response.text)
@@ -72,60 +71,63 @@ def get_dealer_by_id_from_cf(url, dealerId):
     json_data = get_request(url, id=dealerId)
     if json_data:
         for select_dealer in json_data: # find the desired Dealer in the JSON data; set it into a variable
-            dealer_info = select_dealer["doc"] 
-            # Grab returned result and input into object to be returned
-            dealer_info = CarDealer(address=dealer_info["address"],
-                                    city=dealer_info["city"],
-                                    full_name=dealer_info["full_name"],
-                                    id=dealer_info["id"],
-                                    lat=dealer_info["lat"],
-                                    long=dealer_info["long"],
-                                    short_name=dealer_info["short_name"],
-                                    st=dealer_info["st"], zip=dealer_info["zip"]
-                                    )
-    return dealer_info # return the result
+            dealer_info = select_dealer["doc"]
+            if dealer_info['id'] == dealerId:                
+                # Grab returned result and input into object to be returned
+                dealer_info = CarDealer(address=dealer_info["address"],
+                                        city=dealer_info["city"],
+                                        full_name=dealer_info["full_name"],
+                                        id=dealer_info["id"],
+                                        lat=dealer_info["lat"],
+                                        long=dealer_info["long"],
+                                        short_name=dealer_info["short_name"],
+                                        st=dealer_info["st"], zip=dealer_info["zip"]
+                                        )
+                return dealer_info # return the result
 
 
 # Get reviews by dealer ID from cloud function
 def get_dealer_reviews_from_cf(url, dealer_id):
     reviews = [] # create a blank array
-    json_data = get_request(url, dealerId=dealer_id) # Connect to Cloud database using "url" and "dealerId"; store it as JSON Metadata
+    json_data = get_request(url) #, dealerId=dealer_id) # Connect to Cloud database using "url" and "dealerId"; store it as JSON Metadata
+    select_dealer = dealer_id
     # If JSON Data is valid, make a new variable.
     if json_data:
-        all_reviews = json_data
         # Start a loop through reviews retrieved
-        for check_review in json_data:
-        # Check for a purchase and set "None" to nullable fields (if needed)
-            if check_review["purchase"]:
+        all_reviews = json_data
+        for check_review in all_reviews:
+            # Check for a purchase and set "None" to nullable fields (if needed)
+            this_review = check_review["doc"]
+            if this_review["dealership"] == select_dealer: # and this_review["purchase"] != "False":
                 # Print information using DealerReview class in ".Models" to a Variable
                 review_object = DealerReview(
-                    dealership = check_review["dealership"],
-                    name = check_review["name"],
-                    purchase = check_review["purchase"],
-                    review = check_review["review"],
+                    dealership = this_review["dealership"],
+                    name = this_review["name"],
+                    purchase = this_review["purchase"],
+                    review = this_review["review"],
                     # NULLable fields
-                    purchase_date = check_review["purchase_date"],
-                    vehicle_make = check_review["car_make"],
-                    vehicle_model = check_review["car_model"],
-                    vehicle_year = check_review["car_year"],
-                    sentiment = analyze_review_sentiments(check_review["review"]),
-                    dealerID = check_review["id"]
+                    purchase_date = this_review["purchase_date"],
+                    vehicle_make = this_review["car_make"],
+                    vehicle_model = this_review["car_model"],
+                    vehicle_year = this_review["car_year"],
+                    sentiment = analyze_review_sentiments(this_review["review"]),
+                    dealerID = this_review["id"]
                 )
-            else:
-                    review_object = DealerReview(
-                    dealership = check_review["dealership"],
-                    name = check_review["name"],
-                    purchase = check_review["purchase"],
-                    review = check_review["review"],
-                    purchase_date = None,
-                    vehicle_make = None,
-                    vehicle_model = None,
-                    vehicle_year = None,
-                    sentiment = None,
-                    dealerID = None
-                )
-    reviews.append(review_object) # Append to the final variable below
-    return reviews
+            reviews.append([review_object]) # Append to the final variable below
+    return review
+#            elif this_review["dealership"] == dealer_id:
+#                review_object = DealerReview(
+#                    dealership = this_review["dealership"],
+#                    name = this_review["name"],
+#                    purchase = this_review["purchase"],
+#                    review = this_review["review"],
+#                    purchase_date = None,
+#                    vehicle_make = None,
+#                    vehicle_model = None,
+#                    vehicle_year = None,
+#                    sentiment = None,
+#                    dealerID = None
+#                )
 
 # - Call get_request() with specified arguments
 # - Parse JSON results into a DealerView object list
