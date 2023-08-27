@@ -125,15 +125,15 @@ def add_review(request, dealer_id):
     if request.method == "POST":
         json_payload = []
         new_review = []
+        cars = CarModel.objects.filter(dealer_id=dealer_id)
         url = "https://us-south.functions.cloud.ibm.com/api/v1/namespaces/802304f3-f623-4143-9b89-bd84ebf3d479/actions/dealership-package/review-post"      
         if 'purchasecheck' in request.POST:
             was_purchased = True
         else:
             was_purchased = False
-#            cars = CarModel.objects.filter(dealer_id=dealer_id)
 #            for car in cars:
-#                if car.id == int(request.POST['car']):
-            review_car = car
+        if cars.dealer_id == int(request.POST['car']):
+            review_car = cars
             new_review.append(datetime.utcnow().isoformat())
             new_review.append(request.POST["name"])
             new_review["dealership"] = dealer_id
