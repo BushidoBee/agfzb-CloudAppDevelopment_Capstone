@@ -106,6 +106,7 @@ def get_dealer_details(request, dealer_id):
         context["review_list"] = reviews_data
         dealer_data = get_dealer_by_id_from_cf("https://us-south.functions.appdomain.cloud/api/v1/web/802304f3-f623-4143-9b89-bd84ebf3d479/dealership-package/get-dealership", dealer_id)
         context["dealer_list"] = dealer_data
+        context["select_dealer"] = dealer_id
 #        return HttpResponse(reviews_data) # Return a list of dealer name
         return render(request, 'djangoapp/dealer_details.html', context)
 
@@ -113,15 +114,15 @@ def get_dealer_details(request, dealer_id):
 def add_review(request, dealer_id):
     context = {}
     if request.method == "GET":
-        url = "https://us-south.functions.appdomain.cloud/api/v1/web/802304f3-f623-4143-9b89-bd84ebf3d479/dealership-package/post-reviews"
+        url = "https://us-south.functions.appdomain.cloud/api/v1/web/802304f3-f623-4143-9b89-bd84ebf3d479/dealership-package/get-reviews"
         dealer = get_dealer_by_id_from_cf(url, dealer_id)
         cars = CarModel.objects.filter(dealer_id=dealer_id)
         context["vehicles"] = cars
         context["dealer"] = dealer
-    return render(request, 'djangoapp/add_review.html', context)
+        return render(request, 'djangoapp/addreview.html', context)
 
     if request.method == "POST":
-        url = "https://us-south.functions.cloud.ibm.com/api/v1/namespaces/802304f3-f623-4143-9b89-bd84ebf3d479/actions/dealership-package/post-review"      
+        url = "https://us-south.functions.cloud.ibm.com/api/v1/namespaces/802304f3-f623-4143-9b89-bd84ebf3d479/actions/dealership-package/review-post"      
         if 'purchasecheck' in request.POST:
             was_purchased = True
         else:

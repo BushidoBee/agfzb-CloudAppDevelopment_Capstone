@@ -71,7 +71,7 @@ def get_dealers_from_cf(url, **kwargs):
 def get_dealer_by_id_from_cf(url, dealerId):
     json_data = get_request(url, id=dealerId)
     if json_data:
-        for select_dealer in json_data: # index the JSON data; set it into a variable
+        for select_dealer in json_data: # find the desired Dealer in the JSON data; set it into a variable
             dealer_info = select_dealer["doc"] 
             # Grab returned result and input into object to be returned
             dealer_info = CarDealer(address=dealer_info["address"],
@@ -92,6 +92,7 @@ def get_dealer_reviews_from_cf(url, dealer_id):
     json_data = get_request(url, dealerId=dealer_id) # Connect to Cloud database using "url" and "dealerId"; store it as JSON Metadata
     # If JSON Data is valid, make a new variable.
     if json_data:
+        all_reviews = json_data
         # Start a loop through reviews retrieved
         for check_review in json_data:
         # Check for a purchase and set "None" to nullable fields (if needed)
