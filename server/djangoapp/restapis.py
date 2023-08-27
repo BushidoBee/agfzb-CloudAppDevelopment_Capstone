@@ -88,7 +88,7 @@ def get_dealer_by_id_from_cf(url, dealerId):
 
 # Get reviews by dealer ID from cloud function
 def get_dealer_reviews_from_cf(url, dealer_id):
-    reviews = [] # create a blank array
+    select_reviews = [] # create a blank array
     json_data = get_request(url) #, dealerId=dealer_id) # Connect to Cloud database using "url" and "dealerId"; store it as JSON Metadata
     select_dealer = dealer_id
     # If JSON Data is valid, make a new variable.
@@ -113,8 +113,8 @@ def get_dealer_reviews_from_cf(url, dealer_id):
                     sentiment = analyze_review_sentiments(this_review["review"]),
                     dealerID = this_review["id"]
                 )
-            reviews.append([review_object]) # Append to the final variable below
-    return review
+                select_reviews.append(review_object) # Append to the final variable below
+    return select_reviews
 #            elif this_review["dealership"] == dealer_id:
 #                review_object = DealerReview(
 #                    dealership = this_review["dealership"],

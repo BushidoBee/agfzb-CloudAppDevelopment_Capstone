@@ -108,8 +108,8 @@ def get_dealer_details(request, dealer_id):
         context["dealer_list"] = dealer_data
         context["select_dealer"] = dealer_id
 #        return HttpResponse(reviews_data) # Return a list of dealer name
-        return HttpResponse(context["review_list"])
-#        return render(request, 'djangoapp/dealer_details.html', context)
+#        return HttpResponse(context["review_list"])
+        return render(request, 'djangoapp/dealer_details.html', context)
 
 # Create a `add_review` view to submit a review
 def add_review(request, dealer_id):
