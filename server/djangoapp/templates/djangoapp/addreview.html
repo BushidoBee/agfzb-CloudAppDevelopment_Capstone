@@ -35,7 +35,7 @@
         <div class="row">
             <div class="col-md">
                 <h4 class="mb-5"> Add a review for <strong>{{dealer.full_name}}</strong></h4>
-                <form action = "{% url 'djangoapp:addreview' select_dealer %}" method="post">
+                <form action = "{% url 'djangoapp:addreview' dealer.id %}" method="post">
                     <H5>Your Name:</H5><br>
                     {% csrf_token %}
                     <input class="form-control" id="name" name="name" size="30" required></textarea><br>
@@ -50,7 +50,7 @@
                             <h5>Select your car (model-make-year):</h5><br/>
                             <select name="car" id="car" class="form-select"><br>
                                 {% for car in vehicles %}
-                                    <option selected value={{car.id}}>{{car.name}}-{{car.car.name}}-{{ car.year|date:"Y" }}</option>
+                                    <option selected value={{car.dealer_id}}>{{car.car_brand}}: {{car.car_model}} - {{car.year}}</option>
                                 {% endfor %}
                             </select>
                         </div>
