@@ -131,7 +131,7 @@ def add_review(request, dealer_id):
         else:
             was_purchased = False
         if select_car[0]['dealer_id'] == int(request.POST['car']):
-            json_payload['name'] = (request.POST['name'])
+            json_payload['name'] = request.POST['name']
             json_payload['dealership'] = select_car[0]['dealer_id']
             json_payload['review'] = str(request.POST['content'])
             json_payload['purchase'] = was_purchased
