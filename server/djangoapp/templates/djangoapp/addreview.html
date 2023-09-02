@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>Create a Review!</title>
     <meta charset="UTF-8">
     {% load static %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -50,7 +51,7 @@
                             <h5>Select your car (model-make-year):</h5><br/>
                             <select name="car" id="car" class="form-select"><br>
                                 {% for car in vehicles %}
-                                    <option selected value={{car.dealer_id}}>{{car.car_brand}}: {{car.car_model}} - {{car.year}}</option>
+                                    <option selected value={{car.dealer_id}}>{{car.car_brand}} {{car.car_model}} - {{car.year}}</option>
                                 {% endfor %}
                             </select>
                         </div>
