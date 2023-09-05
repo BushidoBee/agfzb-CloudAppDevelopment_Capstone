@@ -26,6 +26,19 @@ class CarModel(models.Model):
     def __str__(self):
         return  str(self.dealer_id)
 
+# Class CustomerReviews w/ Unique ID, Customer, and the car they bought, and/or reviewed
+class CustomerReview(models.Model):
+    review_id = models.AutoField(null=False, primary_key=True, editable=False)
+    customer_name = models.TextField(null=False, max_length=40)
+    dealer_sale = models.IntegerField(null=False)
+    make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
+    model = models.CharField(null=False, max_length=20)
+    year = models.DateField(null=False)
+    car_sold = models.BooleanField()
+    date_of_purchase = models.DateField()
+    customer_review = models.TextField()
+    submit_timestamp = models.TextField()
+
 # Class CarDealer; Holds Basic Data
 class CarDealer:
     def __init__(self, address, city, full_name, id, lat, long, short_name, st, zip):

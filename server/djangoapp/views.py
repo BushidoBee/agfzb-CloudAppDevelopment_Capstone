@@ -2,8 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import CarDealer, DealerReview, CarModel
-from .restapis import get_request, post_request, get_dealers_from_cf, get_dealer_reviews_from_cf, get_dealer_by_id_from_cf
+from .models import CarDealer, DealerReview, CarModel, CustomerReview
+
+from .restapis import get_request, post_request, get_dealers_from_cf, get_dealer_reviews_from_cf, get_dealer_by_id_from_cf, analyze_review_sentiments
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -136,22 +137,22 @@ def add_review(request, dealer_id):
             json_payload['review'] = str(request.POST['content'])
             json_payload['purchase'] = was_purchased
             json_payload['purchase_date'] = str(request.POST['purchasedate'])
-            json_payload['car_make'] = select_car[0]['car_brand']
-            json_payload['car_model'] = select_car[0]['car_model']
+            json_payload['car_make'] = str(select_car[0]['car_brand'])
+            json_payload['car_model'] = str(select_car[0]['car_model'])
             json_payload['car_year'] = select_car[0]['year']
             json_payload['time'] = datetime.utcnow().isoformat()
-            new_review = DealerReview(
-                    dealership = this_review["dealership"],
-                    name = this_review["name"],
-                    purchase = this_review["purchase"],
-                    review = this_review["review"],
+            new_review = CustomerReview(
+                    customer_name = request.POST['name'],
+                    dealer_sale = select_car[0]['dealer_id'],
+                    car_sold = was_purchased,
+                    customer_review = str(request.POST['content']),
                     # NULLable fields
-                    purchase_date = this_review["purchase_date"],
-                    vehicle_make = this_review["car_make"],
-                    vehicle_model = this_review["car_model"],
-                    vehicle_year = this_review["car_year"],
-                    sentiment = analyze_review_sentiments(this_review["review"]),
-                    dealerID = int(request.POST['car']))
+                    date_of_purchase = str(request.POST['purchasedate']),
+                    make = select_car[0]['car_brand'],
+                    model = select_car[0]['car_model'],
+                    year = select_car[0]['year'],
+                    submit_timestamp = datetime.utcnow().isoformat())
+            new_review.save()
 #        response = post_request(url, json_payload, dealerId=dealer_id)
-    return HttpResponse(new_review)
+    return HttpResponse(new_revie)
 #    return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
