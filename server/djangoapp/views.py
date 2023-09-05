@@ -140,6 +140,18 @@ def add_review(request, dealer_id):
             json_payload['car_model'] = select_car[0]['car_model']
             json_payload['car_year'] = select_car[0]['year']
             json_payload['time'] = datetime.utcnow().isoformat()
-        response = post_request(url, json_payload, dealerId=dealer_id)
-#    return HttpResponse(json_payload)
-    return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
+            new_review = DealerReview(
+                    dealership = this_review["dealership"],
+                    name = this_review["name"],
+                    purchase = this_review["purchase"],
+                    review = this_review["review"],
+                    # NULLable fields
+                    purchase_date = this_review["purchase_date"],
+                    vehicle_make = this_review["car_make"],
+                    vehicle_model = this_review["car_model"],
+                    vehicle_year = this_review["car_year"],
+                    sentiment = analyze_review_sentiments(this_review["review"]),
+                    dealerID = int(request.POST['car']))
+#        response = post_request(url, json_payload, dealerId=dealer_id)
+    return HttpResponse(new_review)
+#    return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
