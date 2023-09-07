@@ -100,12 +100,32 @@ def get_dealerships(request):
 # Create a `get_dealer_details` view to render the reviews of a dealer
 def get_dealer_details(request, dealer_id):
     if request.method == "GET":
-        context = {} # create a blank array for rendering
+        context = {} # create blank arrays for rendering
+        other_reviews_data = []
         # Get dealers from the URL
         dealer_data = get_dealer_by_id_from_cf("https://us-south.functions.appdomain.cloud/api/v1/web/802304f3-f623-4143-9b89-bd84ebf3d479/dealership-package/get-dealership", dealer_id)
         url = "https://us-south.functions.appdomain.cloud/api/v1/web/802304f3-f623-4143-9b89-bd84ebf3d479/dealership-package/get-reviews"
         reviews_data = get_dealer_reviews_from_cf(url, dealer_id)
+        other_reviews = CustomerReview.objects.filter(dealer_sale=dealer_id).values('customer_name','make','model','car_sold','year', 'customer_review', 'date_of_purchase')
+#        testvar = other_reviews[x]['customer_name']
+        if other_reviews:
+            for select in other_reviews:
+                db_review_object = DealerReview(
+                        dealership = None,
+                        name = select['customer_name'],
+                        purchase = select['car_sold'],
+                        review = select['customer_review'],
+                        # NULLable fields
+                        purchase_date = select['date_of_purchase'],
+                        vehicle_make = select['make'],
+                        vehicle_model = select['model'],
+                        vehicle_year = select['year'],
+                        sentiment = analyze_review_sentiments(select['customer_review']),
+                        dealerID = dealer_id
+                    )
+                reviews_data.append(db_review_object)
         context["review_list"] = reviews_data
+#        context["other_reviews"] = other_reviews_data
         context["dealer_list"] = dealer_data
         context["select_dealer"] = dealer_id
 #        return HttpResponse(reviews_data) # Return a list of dealer name
@@ -141,18 +161,18 @@ def add_review(request, dealer_id):
             json_payload['car_model'] = str(select_car[0]['car_model'])
             json_payload['car_year'] = select_car[0]['year']
             json_payload['time'] = datetime.utcnow().isoformat()
-            new_review = CustomerReview(
+            new_review = CustomerReview.objects.create(
                     customer_name = request.POST['name'],
                     dealer_sale = select_car[0]['dealer_id'],
                     car_sold = was_purchased,
                     customer_review = str(request.POST['content']),
                     # NULLable fields
                     date_of_purchase = str(request.POST['purchasedate']),
-                    make = select_car[0]['car_brand'],
+                    make = str(select_car[0]['car_brand']),
                     model = select_car[0]['car_model'],
                     year = select_car[0]['year'],
                     submit_timestamp = datetime.utcnow().isoformat())
             new_review.save()
 #        response = post_request(url, json_payload, dealerId=dealer_id)
-    return HttpResponse(new_revie)
-#    return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
+#    return HttpResponse(new_review)
+    return redirect("djangoapp:dealer_details", dealer_id=dealer_id)

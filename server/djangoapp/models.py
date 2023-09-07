@@ -31,7 +31,7 @@ class CustomerReview(models.Model):
     review_id = models.AutoField(null=False, primary_key=True, editable=False)
     customer_name = models.TextField(null=False, max_length=40)
     dealer_sale = models.IntegerField(null=False)
-    make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
+    make = models.CharField(null=False, max_length=20)
     model = models.CharField(null=False, max_length=20)
     year = models.DateField(null=False)
     car_sold = models.BooleanField()
